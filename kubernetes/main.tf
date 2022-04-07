@@ -2,6 +2,14 @@ provider "azurerm" {
   features {}
 }
 
+provider random {
+}
+
+resource "random_integer" "net_id" {
+  min = 1000
+  max = 9999
+}
+
 resource "azurerm_resource_group" "rg_kubernetes" {
   name     = "RG-${var.location_short}-CONTAINER-${random_integer.net_id.result}-${var.environment}"
   location = "${var.location}"
