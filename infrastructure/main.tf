@@ -95,7 +95,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "example" {
   sku                 = "Standard_D4s_v3"
   instances           = 0
   admin_username      = "adminuser"
-  admin_password      = "P@ssw0rd1234!"
+  admin_password      = "Pa55w.rd1234"
   disable_password_authentication = false
 
   source_image_reference {
