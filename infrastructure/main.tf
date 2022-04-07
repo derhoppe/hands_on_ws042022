@@ -88,63 +88,43 @@ resource "azurerm_virtual_network_peering" "net_peering_2" {
   remote_virtual_network_id = azurerm_virtual_network.network_hub.id
 }
 
-resource "azurerm_virtual_machine_scale_set" "vmss" {
- name                = "vmscaleset"
- location            = "${var.location}"
- resource_group_name = azurerm_resource_group.vmss_group.name
- upgrade_policy_mode = "Manual"
+resource "azurerm_linux_virtual_machine_scale_set" "example" {
+  name                = "agent-vmss"
+  resource_group_name = azurerm_resource_group.vmss_group.name
+  location            = "${var.location}"
+  sku                 = "Standard_D4s_v3"
+  instances           = 0
+  admin_username      = "adminuser"
+  admin_password      = "P@ssw0rd1234!"
+  disable_password_authentication = false
 
- sku {
-   name     = "Standard_D4s_v3"
-   tier     = "Standard"
-   capacity = 0
- }
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "20.04-LTS"
+    version   = "latest"
+  }
 
- storage_profile_image_reference {
-   publisher = "Canonical"
-   offer     = "UbuntuServer"
-   sku       = "16.04-LTS"
-   version   = "latest"
- }
+  os_disk {
+    storage_account_type = "Standard_LRS"
+    caching              = "ReadWrite"
+  }
 
- storage_profile_os_disk {
-   name              = ""
-   caching           = "ReadWrite"
-   create_option     = "FromImage"
-   managed_disk_type = "Standard_LRS"
- }
+  network_interface {
+    name    = "example"
+    primary = true
 
- storage_profile_data_disk {
-   lun          = 0
-   caching        = "ReadWrite"
-   create_option  = "Empty"
-   disk_size_gb   = 10
- }
+    ip_configuration {
+      name      = "internal"
+      primary   = true
+      subnet_id = azurerm_subnet.subnet_resource.id
+    }
+  }
 
- os_profile {
-   computer_name_prefix = "vmagent"
-   admin_username       = "vmssadmin"
-   admin_password       = "Pa55w.rd12345"
- }
+  tags = {
+        ENV = "${var.environment}"
+    }
 
- os_profile_linux_config {
-   disable_password_authentication = false
- }
-
- network_profile {
-   name    = "terraformnetworkprofile"
-   primary = true
-
-   ip_configuration {
-     name                                   = "IPConfiguration"
-     subnet_id                              = azurerm_subnet.subnet_resource.id
-     primary = true
-   }
- }
-
- tags = {
-    ENV = "${var.environment}"
- }
 }
 
 output "rnd_net_id" {
