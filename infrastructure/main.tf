@@ -122,10 +122,9 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
  }
 
  os_profile {
-   computer_name_prefix = "vmlab"
+   computer_name_prefix = "vmagent"
    admin_username       = "vmssadmin"
    admin_password       = "Pa55w.rd12345"
-   custom_data          = file("web.conf")
  }
 
  os_profile_linux_config {
