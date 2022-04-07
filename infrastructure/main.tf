@@ -53,7 +53,7 @@ resource "azurerm_virtual_network" "network_hub" {
 resource "azurerm_subnet" "subnet_hub" {
     name                 = "SN-${var.location_short}-INT-${random_integer.net_id.result}-${var.environment}"
     resource_group_name  = azurerm_resource_group.network_group.name
-    virtual_network_name = azurerm_virtual_network.network_resource.name
+    virtual_network_name = azurerm_virtual_network.network_hub.name
     address_prefixes       = ["10.100.0.0/27"]
 }
 
